@@ -1,6 +1,7 @@
 import {Metadata} from 'next'
 import './globals.css'
 import Favicon from '../public/favicon.ico'
+import {Navbar} from './_/field/navbar'
 
 export const metadata: Metadata = {
   title: '세나리 시뮬레이터',
@@ -11,7 +12,10 @@ export const metadata: Metadata = {
 export default function RootLayout({children}: {children: React.ReactNode}) {
   return (
     <html lang="ko">
-      <body>{children}</body>
+      <body>
+        {children}
+        <Navbar />
+      </body>
     </html>
   )
 }
