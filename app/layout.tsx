@@ -13,7 +13,7 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
   return (
     <html lang="ko">
       <body>
-        {children}
+        <main className="h-[calc(100vh-40px)]">{children}</main>
         <Navbar />
       </body>
     </html>
