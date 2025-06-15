@@ -7,7 +7,7 @@ const TABS: Tab[] = [
 
 export function Navbar() {
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-[1] h-[40px] bg-black/90 text-white">
+    <nav className="h-[40px] bg-black/90 text-white">
       <ul className="flex h-full *:flex-1">
         {TABS.map((tab) => (
           <li key={tab.name} className="">
