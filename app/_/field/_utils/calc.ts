@@ -16,12 +16,14 @@ export function sumSpec(...specs: Spec[]) {
 export function calculateStat({statId, specSum}: {statId: StatId; specSum: Spec}) {
   switch (statId) {
     case S.ATK:
-      return specSum[S.ATK] * (1 + specSum[S.ATKPER_ITEM] / 100) + specSum[S.ATK_ITEM]
+      return (specSum[S.ATK] || 0) * (1 + (specSum[S.ATKPER_ITEM] || 0) / 100) + (specSum[S.ATK_ITEM] || 0)
+    case S.DEF:
+      return (specSum[S.DEF] || 0) * (1 + (specSum[S.DEFPER_ITEM] || 0) / 100) + (specSum[S.DEF_ITEM] || 0)
     case S.STA:
-      return specSum[S.STA] * (1 + specSum[S.STAPER_ITEM] / 100) + specSum[S.STA_ITEM]
+      return (specSum[S.STA] || 0) * (1 + (specSum[S.STAPER_ITEM] || 0) / 100) + (specSum[S.STA_ITEM] || 0)
 
     default:
-      return specSum[statId]
+      return specSum[statId] || 0
   }
 }
 
