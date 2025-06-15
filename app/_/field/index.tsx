@@ -1,57 +1,26 @@
 'use client'
 
 import {useState} from 'react'
-import {StatId, StatIds as S} from '../../_shared/_types/spec'
-import {Unit} from '../../_shared/_types/unit'
+import {StatId} from '../../_shared/_types/spec'
 import {Stats} from '../../_shared/database/stats'
-import {DefaultSpecByUnitType, RefineSpecByUnitType_SR} from '../../_shared/database/spec'
-import {UnitTypes} from '../../_shared/_types/type'
-import {UnitRanks} from '../../_shared/_types/rank'
+import {RefineSpecByUnitType_SR} from '../../_shared/database/spec'
 import {IconStar} from './star'
 import {calculateStat, getTranscendenceSpec, sumSpec} from './_utils/calc'
-
-const UNIT: Unit = {
-  imageUrl:
-    'https://i.namu.wiki/i/N-SHAZfQjHnDqll1f20ZsMOk8Tp0vyg1JhZrCfHHoo85jrWy5ejMNhCaE_fVdm-ZHdAVkqpVutElALMTxYalH5DVSyFNhtd8BImlynnDMbFK711W4eHoOIN1b8U2diAm4gjbWKtmyegFgn6so8mfuQ.webp',
-  name: '세인',
-  type: UnitTypes.ATK,
-  rank: UnitRanks.SR,
-  spec: {
-    ...DefaultSpecByUnitType[UnitRanks.SR][UnitTypes.ATK],
-    [S.SPD]: 29,
-    [S.CRI]: 5,
-    [S.CRD]: 150,
-    [S.BST]: 0,
-    [S.BLK]: 0,
-    [S.EFF]: 0,
-    [S.TNC]: 0,
-  },
-  skills: [
-    {
-      name: '기본 공격',
-      effect: (prev) => {
-        return prev
-      },
-    },
-    {
-      name: '귀신 베기',
-      effect: (prev) => {
-        return prev
-      },
-    },
-    {
-      name: '악마의 힘',
-      effect: (prev) => {
-        return prev
-      },
-    },
-  ],
-}
+import {useAtom} from 'jotai'
+import {selectedUnitIdAtom, unitsAtom} from '../../_shared/atom'
 
 export function Field() {
+  const [selectedUnitId] = useAtom(selectedUnitIdAtom)
+  const [units] = useAtom(unitsAtom)
+  const unit = selectedUnitId ? units[selectedUnitId] : null
   const [refineLevel, setRefineLevel] = useState(5)
   const [transcendenceLevel, setTranscendenceLevel] = useState(2)
-  const transcendenceSpec = getTranscendenceSpec({level: transcendenceLevel, unitType: UNIT.type})
+
+  if (!unit) {
+    return <></>
+  }
+
+  const transcendenceSpec = getTranscendenceSpec({level: transcendenceLevel, unitType: unit.type})
 
   return (
     <div className="flex w-max flex-col gap-[20px] rounded bg-black/80 p-[20px] text-white">
@@ -70,8 +39,8 @@ export function Field() {
             ))}
           </div>
           <div className="flex items-end gap-[8px]">
-            <span className="text-[18px]">세인</span>
-            <span className="text-[13px] text-gray-400">악마봉인자</span>
+            <span className="text-[18px]">{unit.name}</span>
+            <span className="text-[13px] text-gray-400">{unit.title}</span>
           </div>
         </div>
         <div className="flex flex-col text-right select-none">
@@ -84,17 +53,17 @@ export function Field() {
         </div>
       </div>
       <div className="flex gap-[20px]">
-        <img src={UNIT.imageUrl} className="w-[200px]" />
+        <img src={unit.imageUrl} className="w-[200px] bg-slate-400 object-cover" />
         <div>
-          {Object.keys(UNIT.spec).map((statId) => (
+          {Object.keys(unit.spec).map((statId) => (
             <div key={statId} className="flex justify-between gap-[10px]">
               <div>{Stats[Number(statId) as StatId].name}</div>
               {Math.floor(
                 calculateStat({
                   statId: Number(statId) as StatId,
                   specSum: sumSpec(
-                    UNIT.spec,
-                    {[statId]: (RefineSpecByUnitType_SR[UNIT.rank][statId] || 0) * refineLevel},
+                    unit.spec,
+                    {[statId]: (RefineSpecByUnitType_SR[unit.rank][Number(statId) as StatId] || 0) * refineLevel},
                     transcendenceSpec
                   ),
                 })
@@ -105,7 +74,7 @@ export function Field() {
       </div>
       <div className="flex justify-between">
         <div className="flex gap-[4px]">
-          {UNIT.skills.map(({name}) => (
+          {unit.skills.map(({name}) => (
             <div key={name} className="h-[40px] w-[40px] rounded-xs bg-amber-50"></div>
           ))}
         </div>
@@ -126,7 +95,7 @@ export function Field() {
 
       <hr />
       <div className="flex flex-col gap-[10px] text-[12px]">
-        <div className="font-bold">{UNIT.name}을 활용할 수 있는 컨텐츠 목록</div>
+        <div className="font-bold">{unit.name}을 활용할 수 있는 컨텐츠 목록</div>
         <div className="flex flex-wrap gap-[20px]">
           <div>파멸의 눈동자</div>
           <div>무한의 탑</div>
